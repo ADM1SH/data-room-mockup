@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Room | CFO Desk mockup</title>
+<meta name="description" content="Clickable mockup of the proposed Data Room page: exports and sheet connection telemetry for every page. Sample data only.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232563EB'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Tokens copied from founders-tool-react/src/styles/global.css (lines 1-93). Do not edit the copy. */
+:root {
+  --bg: #f4f6f8; --surface: #ffffff; --sidebar-bg: #ffffff; --brand-logo: #004AAD;
+  --sidebar-text: #4a4f56; --sidebar-hover: rgba(37,99,235,0.07); --sidebar-active: rgba(37,99,235,0.12);
+  --teal: #2563EB; --teal-deep: #1D4ED8; --teal-soft: #EFF6FF; --teal-glow: rgba(37,99,235,0.12);
+  --on-teal: #ffffff;
+  --fc-projected: #4f6fa8;
+  --ink: #1a1d21; --ink-soft: #4a4f56; --ink-dim: #8b919a; --ink-faint: #bcc2ca;
+  --rule: #e1e5ea; --rule-soft: #edf0f3;
+  --danger: #d94452; --danger-soft: #fef0f1; --amber: #c08a28; --amber-soft: #fdf6e3;
+  --amber-ink: #92400e; --success-ink: #065f46; --danger-ink: #b42318;
+  --success: #1a9a6c; --success-soft: #e6f8f1;
+  --blue: #2563EB; --blue-soft: #EFF6FF; --purple: #7c3aed; --purple-soft: #f3edff;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 1px 3px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.07);
+  --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  --radius: 10px; --radius-sm: 6px; --radius-lg: 14px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1216; --surface: #171b21; --sidebar-bg: #13161b; --brand-logo: #ffffff;
+  --sidebar-text: #c4c9d0; --sidebar-hover: rgba(96,165,250,0.08); --sidebar-active: rgba(96,165,250,0.16);
+  --teal: #60a5fa; --teal-deep: #7cb4fb; --teal-soft: #1a2740; --on-teal: #0f1216; --fc-projected: #93b8f5; --teal-glow: rgba(59,130,246,0.22);
+  --ink: #e8eaed; --ink-soft: #cdd2d9; --ink-dim: #a0a7b1; --ink-faint: #6b727c;
+  --rule: #353c46; --rule-soft: #262b33;
+  --danger: #f06272; --danger-soft: #3a1d22; --amber: #e0a845; --amber-soft: #33290f;
+  --amber-ink: #fcd34d; --success-ink: #6ee7b7; --danger-ink: #fca5a5;
+  --success: #3cc48e; --success-soft: #12302a;
+  --blue: #60a5fa; --blue-soft: #1a2740; --purple: #a78bfa; --purple-soft: #2a2240;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 1px 3px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.45);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+a { color: var(--teal); }
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--surface); padding: 8px 12px; border-radius: var(--radius-sm); z-index: 100; }
+.skip:focus { left: 8px; }
+
+.app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--rule); position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; z-index: 20; }
+.brand { padding: 20px 20px 16px; font-weight: 700; font-size: 18px; color: var(--brand-logo); letter-spacing: -0.2px; }
+.nav-section { padding: 6px 12px 10px; }
+.nav-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); padding: 8px 8px 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; border-radius: var(--radius-sm); color: var(--sidebar-text); text-decoration: none; font-size: 13.5px; }
+.nav-item:hover { background: var(--sidebar-hover); }
+.nav-item.active { background: var(--sidebar-active); color: var(--teal); font-weight: 600; }
+.nav-item svg { width: 16px; height: 16px; flex: none; }
+.scrim { display: none; }
+
+/* Main */
+.main { min-width: 0; }
+.topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 12px; padding: 10px 28px; background: var(--surface); border-bottom: 1px solid var(--rule); min-height: 56px; }
+.topbar .co { font-weight: 600; }
+.tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--amber-soft); color: var(--amber-ink); border: 1px solid var(--amber); }
+.spacer { flex: 1; }
+.menu-btn { display: none; }
+.content { padding: 28px; max-width: 1100px; }
+h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
+.page-desc { color: var(--ink-soft); margin-top: 4px; max-width: 70ch; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 0 14px; border-radius: var(--radius-sm); border: 1px solid var(--rule); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 500; }
+.btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+.btn:disabled { opacity: 0.55; cursor: progress; }
+.btn-primary { background: var(--teal); border-color: var(--teal); color: var(--on-teal); }
+.btn-primary:hover:not(:disabled) { background: var(--teal-deep); color: var(--on-teal); }
+.btn-sm { min-height: 32px; padding: 0 10px; font-size: 12.5px; }
+.icon-btn { min-width: 40px; padding: 0 10px; }
+
+/* Summary strip */
+.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 16px; }
+.stat { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+.stat-n { font-size: 26px; font-weight: 700; font-family: var(--mono); line-height: 1.1; }
+.stat-l { color: var(--ink-soft); font-size: 12.5px; margin-top: 4px; }
+
+/* Filters */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.chip { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); cursor: pointer; font-size: 13px; }
+.chip[aria-pressed="true"] { background: var(--teal-soft); border-color: var(--teal); color: var(--teal); font-weight: 600; }
+
+/* Page cards */
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 16px; overflow: hidden; }
+.card-h { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--rule-soft); flex-wrap: wrap; }
+.card-h h2 { font-size: 16px; font-weight: 600; }
+.route { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); }
+.sec-l { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); padding: 12px 18px 4px; }
+.conn { border-top: 1px solid var(--rule-soft); }
+.conn:first-of-type { border-top: 0; }
+.conn-row { display: flex; align-items: center; gap: 14px; padding: 12px 18px; flex-wrap: wrap; }
+.conn-main { flex: 1 1 260px; min-width: 0; }
+.conn-name { font-weight: 600; }
+.conn-sub { color: var(--ink-soft); font-size: 12.5px; }
+.conn-time { font-size: 12.5px; color: var(--ink-soft); flex: 0 1 190px; }
+.conn-time b { font-weight: 500; color: var(--ink); }
+.conn-act { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.note { margin: 0 18px 12px; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 12.5px; }
+.note-err { background: var(--danger-soft); color: var(--danger-ink); border: 1px solid var(--danger); }
+.note-warn { background: var(--amber-soft); color: var(--amber-ink); border: 1px solid var(--amber); }
+
+/* Badges: shape plus text, never colour alone */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.badge::before { content: ""; width: 8px; height: 8px; background: currentColor; }
+.b-ok { background: var(--success-soft); color: var(--success-ink); } .b-ok::before { border-radius: 50%; }
+.b-error { background: var(--danger-soft); color: var(--danger-ink); } .b-error::before { transform: rotate(45deg); }
+.b-stale { background: var(--amber-soft); color: var(--amber-ink); } .b-stale::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.b-none { background: var(--rule-soft); color: var(--ink-soft); } .b-none::before { border-radius: 50%; background: transparent; border: 2px solid currentColor; }
+
+/* Details and run history */
+.detail { padding: 4px 18px 16px; background: var(--bg); border-top: 1px solid var(--rule-soft); }
+.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 20px; padding: 14px 0 10px; }
+.dl dt { font-size: 11.5px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+.dl dd { font-size: 13px; overflow-wrap: anywhere; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule-soft); white-space: nowrap; }
+th { color: var(--ink-dim); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+tr:last-child td { border-bottom: 0; }
+td.err { white-space: normal; min-width: 220px; }
+.hint { color: var(--ink-dim); font-size: 12.5px; padding: 6px 0; }
+
+/* Exports */
+.exports { display: flex; flex-wrap: wrap; gap: 10px; padding: 6px 18px 16px; }
+.exp { display: flex; align-items: center; gap: 10px; border: 1px solid var(--rule); border-radius: var(--radius); padding: 8px 8px 8px 12px; background: var(--surface); }
+.exp-t { font-size: 13px; font-weight: 500; }
+.exp-f { font-family: var(--mono); font-size: 11.5px; color: var(--ink-dim); }
+.empty { color: var(--ink-dim); padding: 10px 18px 16px; font-size: 13px; }
+.no-match { padding: 40px 16px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--rule); border-radius: var(--radius); }
+
+/* Toast */
+#toasts { position: fixed; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 50; }
+.toast { background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); font-size: 13px; max-width: 340px; }
+.toast.err { background: var(--danger); color: #fff; }
+
+@media (prefers-reduced-motion: no-preference) { .toast { animation: up .18s ease-out; } @keyframes up { from { transform: translateY(6px); opacity: 0; } } }
+
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { position: fixed; inset: 0 auto 0 0; width: 260px; transform: translateX(-100%); visibility: hidden; transition: transform .2s; }
+  body.nav-open .sidebar { transform: none; visibility: visible; }
+  body.nav-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 15; }
+  .menu-btn { display: inline-flex; }
+  .topbar { padding: 8px 16px; }
+  .topbar .co { display: none; }
+  .content { padding: 20px 16px; }
+  .summary { grid-template-columns: repeat(2, 1fr); }
+  .btn, .chip, .btn-sm { min-height: 44px; }
+  .conn-time { flex-basis: 100%; }
+  #toasts { left: 16px; right: 16px; }
+  .toast { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app">
+  <nav class="sidebar" id="sidebar" aria-label="Main">
+    <div class="brand">CFO Desk</div>
+    <div class="nav-section">
+      <div class="nav-label">Setup</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="2.5"/><circle cx="8" cy="8" r="6"/></svg>Set Up Info</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3h10M3 8h10M3 13h6"/><circle cx="13" cy="13" r="1.5"/></svg>Metric Governance</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Data</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="1" width="10" height="14" rx="1.5"/><path d="M6 5h4M6 8h4M6 11h2"/></svg>Financial Metrics</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="9" width="3" height="5"/><rect x="6.5" y="5" width="3" height="9"/><rect x="11" y="2" width="3" height="12"/></svg>Operating Metrics</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h9M8 2l3 3-3 3"/><path d="M14 11H5M8 8l-3 3 3 3"/></svg>Cash Flow</a>
+      <a class="nav-item active" href="#" aria-current="page"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg>Data Room</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Planning</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 13l4-4 3 3 5-6"/><path d="M2 2v12h12"/></svg>Financial Modelling</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 14l4-5 3 3 5-7"/><path d="M11 5h3v3"/></svg>Valuation</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M2 6h12M6.5 6v7.5"/></svg>Cap Table</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">ARR Tracker</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 12l4-4 3 3 5-6"/></svg>ARR</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Share</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M5 6h6M5 9h4"/></svg>Organizational Update</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="5.5" r="2.5"/><path d="M3 14c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/></svg>Share Data to VC</a>
+    </div>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="btn icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">Menu</button>
+      <span class="co">Northwind Labs Sdn Bhd</span>
+      <span class="tag">Mockup, sample data</span>
+      <span class="spacer"></span>
+      <button class="btn" id="themeBtn" type="button" aria-label="Switch theme">Dark</button>
+    </header>
+
+    <main class="content" id="main">
+      <h1>Data Room</h1>
+      <p class="page-desc">Every export and every sheet connection in the app, grouped by the page that uses it. Times are Asia/Kuala_Lumpur (MYT).</p>
+
+      <section class="summary" aria-label="Summary" id="summary"></section>
+
+      <div class="filters" role="group" aria-label="Filter connections" id="filters"></div>
+
+      <div id="pages"></div>
+    </main>
+  </div>
+</div>
+<div id="toasts" role="status" aria-live="polite"></div>
+
+<script>
+// All data below is invented sample data. Static strings only, so nothing here needs escaping.
+const NOW = Date.now(), MIN = 60000, ACCT = 'founder@example.test';
+const t = (minAgo) => NOW - minAgo * MIN;            // minutes ago -> timestamp
+const runs = (last, statuses, err) => statuses.map((s, i) => ({ at: t(last + i * 15), sec: [2.1, 1.8, 2.4, 1.9, 2.2][i % 5], ok: s === 's', err: s === 'e' ? err : '' }));
+
+// kind: sheet (read) | write (write-only sheet) | xero | doc | file | none
+const PAGES = [
+  { name: 'Financial Metrics', route: '/upload/financials', conns: [
+    { kind: 'xero', name: 'Northwind Labs Sdn Bhd', sub: 'Xero, refreshed hourly', status: 'ok', last: 38, next: -22, error: '' } ],
+    exports: [{ label: 'Export CSV', file: 'financial-metrics.csv' }] },
+  { name: 'Operating Metrics', route: '/upload/metrics', conns: [
+    { kind: 'sheet', name: 'KPI Tracker FY26', sub: 'Google Sheet, tab "Monthly KPIs", refreshed every 15 min', status: 'ok', last: 2880, next: 2865, imported: 4320, changed: 2870, review: 3, error: '',
+      runs: runs(2880, ['s','s','s','s','s']) } ],
+    exports: [{ label: 'Export CSV', file: 'operating-metrics.csv' }] },
+  { name: 'Financial Modelling', route: '/financial-modelling', conns: [
+    { kind: 'sheet', name: 'FY26 Forecast Model, Base case', sub: 'Forecast source, tab "Forecast"', status: 'ok', last: 11, next: -4, imported: 1440, changed: 190, error: '', runs: runs(11, ['s','s','s','s','s']) },
+    { kind: 'sheet', name: 'FY26 Forecast Model, Downside case', sub: 'Forecast source, tab "Downside"', status: 'error', last: 47, next: -13, imported: 5760, changed: 600,
+      error: 'The tab "Downside" was not found in this spreadsheet. Pick the tab again on the Forecast source step.',
+      runs: runs(47, ['e','e','e','s','s'], 'The tab "Downside" was not found in this spreadsheet.') },
+    { kind: 'none', name: 'Case 3', sub: 'Optional third forecast case' },
+    { kind: 'write', name: 'FY26 Forecast Model', sub: 'Actuals source, writes to tab "FP to Sheet"', status: 'ok', written: 2900, writeError: '' } ],
+    exports: [{ label: 'Consolidated, Base case', file: 'consolidated.csv' }, { label: 'Consolidated, Downside case', file: 'consolidated-downside.csv' }] },
+  { name: 'Cash Flow', route: '/cash-flow', conns: [
+    { kind: 'file', name: 'Bank statements', sub: 'Uploaded as PDF, CSV or Excel. There is no sheet connection on this page.' } ],
+    exports: [{ label: 'Run export, CSV', file: 'oct-2026-statement.csv' }, { label: 'Run export, Excel', file: 'oct-2026-statement.xlsx' }, { label: 'Consolidated cash flow', file: 'cash-flow.xlsx' }] },
+  { name: 'Cap Table', route: '/valuation/cap-table', conns: [
+    { kind: 'write', name: 'Northwind Cap Table', sub: 'Writes to tab "FP to Sheet"', status: 'error', written: 14400,
+      writeError: 'Google access was revoked. Connect Google again on the Cap Table page.' } ],
+    exports: [] },
+  { name: 'ARR Tracker', route: '/arr/overview', conns: [
+    { kind: 'write', name: 'Northwind ARR Tracker', sub: 'Writes to tab "FP to Sheet"', status: 'ok', written: 310, writeError: '' } ],
+    exports: [{ label: 'Download as .xlsx', file: 'arr-tracker.xlsx' }] },
+  { name: 'Organizational Update', route: '/org-update', conns: [
+    { kind: 'doc', name: 'Monthly Updates, Oct 2026', sub: 'Google Doc, re-read a few minutes after it is edited', status: 'ok', last: 2750, error: '' } ],
+    exports: [] },
+];
+const STALE_MIN = 1440; // mockup rule: a connection with no refresh for 24 h is "Stale". Needs a backend decision.
+
+const MYT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+const fmt = (ts) => ts ? MYT.format(ts).replace(',', '') + ' MYT' : 'Never';
+const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN), a = Math.abs(m), s = m < 0 ? 'in ' : '', e = m < 0 ? '' : ' ago';
+  if (a < 1) return 'just now'; if (a < 60) return s + a + ' min' + e; if (a < 1440) return s + Math.round(a / 60) + ' h' + e; return s + Math.round(a / 1440) + ' days' + e; };
+
+// Turn the minutes-ago offsets into timestamps once. "next" is minutes from now (positive means overdue).
+PAGES.forEach(p => p.conns.forEach(c => { for (const k of ['last', 'imported', 'changed', 'written']) if (c[k] != null) c[k] = t(c[k]); if (c.next != null) c.next = NOW - c.next * MIN; }));
+
+const state = (c) => c.kind === 'none' ? 'none' : c.kind === 'file' ? 'file' : c.status === 'error' ? 'error' : (c.kind !== 'write' && c.kind !== 'doc' && Date.now() - c.last > STALE_MIN * MIN) ? 'stale' : 'ok';
+const LABEL = { ok: 'Healthy', error: 'Needs attention', stale: 'Stale', none: 'Not connected' };
+
+let filter = 'all'; const open = new Set();
+const $ = (s) => document.querySelector(s);
+const FILTERS = [['all', 'All'], ['error', 'Needs attention'], ['stale', 'Stale'], ['review', 'Rows to review'], ['none', 'Not connected']];
+const matches = (c) => filter === 'all' || (filter === 'review' ? !!c.review : state(c) === filter);
+
+function toast(msg, err) { const d = document.createElement('div'); d.className = 'toast' + (err ? ' err' : ''); d.textContent = msg; $('#toasts').append(d); setTimeout(() => d.remove(), 3800); }
+
+function fields(c) {
+  const f = [];
+  if (c.kind === 'xero') f.push(['Organisation', c.name], ['Last refreshed', fmt(c.last)], ['Next refresh', fmt(c.next)]);
+  else if (c.kind === 'doc') f.push(['Document', c.name], ['Google account', ACCT], ['Last refreshed', fmt(c.last)], ['Last error', c.error || 'None']);
+  else if (c.kind === 'write') f.push(['Spreadsheet', c.name], ['Google account', ACCT], ['Last written', fmt(c.written)], ['Last write error', c.writeError || 'None']);
+  else f.push(['Spreadsheet', c.name], ['Google account', ACCT], ['Last refreshed', fmt(c.last)], ['Next refresh', c.next < Date.now() ? 'Overdue' : fmt(c.next)], ['Last imported', fmt(c.imported)], ['Sheet last changed', fmt(c.changed)], ['Last error', c.error || 'None']);
+  return '<dl class="dl">' + f.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('') + '</dl>';
+}
+function history(c) {
+  if (!c.runs) return '<p class="hint">Run history is not recorded for this connection type today.</p>';
+  return `<div class="table-wrap"><table><caption class="hint" style="text-align:left;caption-side:top">Last ${Math.min(c.runs.length, 20)} refresh runs</caption><thead><tr><th>Started</th><th>Duration</th><th>Result</th><th>Error</th></tr></thead><tbody>` +
+    c.runs.slice(0, 20).map(r => `<tr><td>${fmt(r.at)}</td><td>${r.sec.toFixed(1)} s</td><td><span class="badge ${r.ok ? 'b-ok' : 'b-error'}">${r.ok ? 'Success' : 'Error'}</span></td><td class="err">${r.err || ''}</td></tr>`).join('') + '</tbody></table></div>';
+}
+
+function connHtml(c, pi, ci) {
+  const s = state(c), id = `c${pi}-${ci}`, isOpen = open.has(id);
+  if (s === 'none') return `<div class="conn"><div class="conn-row"><div class="conn-main"><div class="conn-name">${c.name}</div><div class="conn-sub">${c.sub}</div></div><span class="badge b-none">Not connected</span><div class="conn-act"><button class="btn btn-sm" data-act="connect">Connect</button></div></div></div>`;
+  if (s === 'file') return `<div class="conn"><div class="conn-row"><div class="conn-main"><div class="conn-name">${c.name}</div><div class="conn-sub">${c.sub}</div></div></div></div>`;
+  const write = c.kind === 'write', ts = write ? c.written : c.last, err = write ? c.writeError : c.error;
+  const act = `<button class="btn btn-sm" data-act="${write ? 'push' : 'refresh'}" data-id="${pi}-${ci}">${write ? 'Push now' : 'Refresh now'}</button>`;
+  return `<div class="conn"><div class="conn-row">
+    <div class="conn-main"><div class="conn-name">${c.name}</div><div class="conn-sub">${c.sub}</div></div>
+    <span class="badge b-${s}">${LABEL[s]}</span>
+    <div class="conn-time">${write ? 'Last written' : 'Last refreshed'} <b>${rel(ts)}</b><br><span>${fmt(ts)}</span></div>
+    <div class="conn-act">${act}<button class="btn btn-sm" data-act="toggle" data-id="${id}" aria-expanded="${isOpen}" aria-controls="d-${id}">${isOpen ? 'Hide details' : 'Details'}</button></div></div>
+    ${err ? `<p class="note note-err"><b>Error:</b> ${err}</p>` : ''}
+    ${s === 'stale' ? `<p class="note note-warn">No refresh for over 24 hours. The figures on the page may be old.</p>` : ''}
+    ${c.review ? `<p class="note note-warn">${c.review} new rows in the sheet are not mapped yet. Review them on the page to include them.</p>` : ''}
+    ${isOpen ? `<div class="detail" id="d-${id}">${fields(c)}${history(c)}</div>` : ''}</div>`;
+}
+
+function render() {
+  const live = PAGES.flatMap(p => p.conns).filter(c => c.kind !== 'none' && c.kind !== 'file');
+  const count = (f) => live.filter(c => state(c) === f).length, exports = PAGES.reduce((n, p) => n + p.exports.length, 0);
+  $('#summary').innerHTML = [[live.length, 'Connections'], [count('ok'), 'Healthy'], [count('error') + count('stale'), 'Need attention or stale'], [exports, 'Exports']]
+    .map(([n, l]) => `<div class="stat"><div class="stat-n">${n}</div><div class="stat-l">${l}</div></div>`).join('');
+  $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button class="chip" data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join('');
+  $('#pages').innerHTML = PAGES.map((p, pi) => {
+    const rows = p.conns.map((c, ci) => matches(c) ? connHtml(c, pi, ci) : '').join('');
+    if (!rows) return '';
+    const ex = filter !== 'all' ? '' : `<div class="sec-l">Exports</div>` + (p.exports.length
+      ? `<div class="exports">${p.exports.map((e, ei) => `<div class="exp"><div><div class="exp-t">${e.label}</div><div class="exp-f">${e.file}</div></div><button class="btn btn-sm btn-primary" data-act="export" data-id="${pi}-${ei}" aria-label="Download ${e.label}, ${e.file}">Download</button></div>`).join('')}</div>`
+      : `<p class="empty">No exports on this page.</p>`);
+    return `<section class="card" aria-labelledby="h${pi}"><div class="card-h"><h2 id="h${pi}">${p.name}</h2><span class="route">${p.route}</span><span class="spacer"></span><button class="btn btn-sm" data-act="open" data-route="${p.route}">Open page</button></div><div class="sec-l">${p.conns.some(c => c.kind === 'file') ? 'Source' : 'Connections'}</div>${rows}${ex}</section>`;
+  }).join('') || '<p class="no-match">Nothing matches this filter.</p>';
+}
+
+const busy = (btn, label) => { btn.disabled = true; btn.dataset.l = btn.textContent; btn.textContent = label; };
+const ids = (s) => s.split('-').map(Number);
+
+document.addEventListener('click', (ev) => {
+  const chip = ev.target.closest('[data-filter]'); if (chip) { filter = chip.dataset.filter; render(); return; }
+  const b = ev.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act;
+  if (act === 'toggle') { open.has(b.dataset.id) ? open.delete(b.dataset.id) : open.add(b.dataset.id); render(); document.querySelector(`[data-act="toggle"][data-id="${b.dataset.id}"]`)?.focus(); return; }
+  if (act === 'connect') return toast('Mockup: opens the connect panel for this page in the real app.');
+  if (act === 'open') return toast('Mockup: opens ' + b.dataset.route + ' in the real app.');
+  if (act === 'export') {
+    const [pi, ei] = ids(b.dataset.id), e = PAGES[pi].exports[ei]; busy(b, 'Preparing');
+    setTimeout(() => {
+      if (e.file.endsWith('.csv')) { // same UTF-8 BOM pattern as lib/download.ts
+        const blob = new Blob(['﻿' + 'Account,Sep 2026,Oct 2026\nRevenue (RM),182400,196150\nCost of sales (RM),74210,79880\nGross profit (RM),108190,116270'], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = e.file; document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+        toast('Downloaded ' + e.file + ' (sample data)');
+      } else toast('Mockup: the real app would download ' + e.file + '.');
+      b.disabled = false; b.textContent = b.dataset.l;
+    }, 700);
+    return;
+  }
+  if (act === 'refresh' || act === 'push') {
+    const [pi, ci] = ids(b.dataset.id), c = PAGES[pi].conns[ci], now = Date.now(); busy(b, act === 'push' ? 'Pushing' : 'Refreshing');
+    setTimeout(() => {
+      if (c.status === 'error') { if (act === 'refresh') { c.runs?.unshift({ at: now, sec: 1.2, ok: false, err: c.error }); } toast((act === 'push' ? 'Push failed: ' + c.writeError : 'Refresh failed again. Fix the error on the page first.'), true); }
+      else if (act === 'push') { c.written = now; toast('Pushed to ' + c.name + '.'); }
+      else { c.last = now; c.next = now + 15 * MIN; c.runs?.unshift({ at: now, sec: 2, ok: true, err: '' }); toast('Refreshed ' + c.name + '.'); }
+      render();
+    }, 1000);
+  }
+});
+
+// Theme: starts from the OS setting, remembers the choice when storage is allowed.
+const root = document.documentElement, themeBtn = $('#themeBtn');
+let saved = null; try { saved = localStorage.getItem('dr-theme'); } catch (e) {}
+const setTheme = (th) => { root.dataset.theme = th; themeBtn.textContent = th === 'dark' ? 'Light' : 'Dark'; try { localStorage.setItem('dr-theme', th); } catch (e) {} };
+setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+themeBtn.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+// Mobile menu
+const setNav = (o) => { document.body.classList.toggle('nav-open', o); $('#menuBtn').setAttribute('aria-expanded', o); };
+$('#menuBtn').addEventListener('click', () => setNav(!document.body.classList.contains('nav-open')));
+$('#scrim').addEventListener('click', () => setNav(false));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setNav(false); });
+
+render();
+</script>
+</body>
+</html>
