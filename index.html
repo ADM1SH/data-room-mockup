@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* Tokens copied from founders-tool-react/src/styles/global.css (lines 1-93). Do not edit the copy. */
+/* Tokens copied from founders-tool-react/src/styles/global.css (light tokens only, lines 1-54). Do not edit the copy. */
 :root {
   --bg: #f4f6f8; --surface: #ffffff; --sidebar-bg: #ffffff; --brand-logo: #004AAD;
   --sidebar-text: #4a4f56; --sidebar-hover: rgba(37,99,235,0.07); --sidebar-active: rgba(37,99,235,0.12);
@@ -30,25 +30,8 @@
   --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
   --radius: 10px; --radius-sm: 6px; --radius-lg: 14px;
 }
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #0f1216; --surface: #171b21; --sidebar-bg: #13161b; --brand-logo: #ffffff;
-  --sidebar-text: #c4c9d0; --sidebar-hover: rgba(96,165,250,0.08); --sidebar-active: rgba(96,165,250,0.16);
-  --teal: #60a5fa; --teal-deep: #7cb4fb; --teal-soft: #1a2740; --on-teal: #0f1216; --fc-projected: #93b8f5; --teal-glow: rgba(59,130,246,0.22);
-  --ink: #e8eaed; --ink-soft: #cdd2d9; --ink-dim: #a0a7b1; --ink-faint: #6b727c;
-  --rule: #353c46; --rule-soft: #262b33;
-  --danger: #f06272; --danger-soft: #3a1d22; --amber: #e0a845; --amber-soft: #33290f;
-  --amber-ink: #fcd34d; --success-ink: #6ee7b7; --danger-ink: #fca5a5;
-  --success: #3cc48e; --success-soft: #12302a;
-  --blue: #60a5fa; --blue-soft: #1a2740; --purple: #a78bfa; --purple-soft: #2a2240;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md: 0 1px 3px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.3);
-  --shadow-lg: 0 4px 24px rgba(0,0,0,0.45);
-}
-
 /* Added for the mockup (not an app token): muted text that keeps 4.5:1 contrast on light surfaces. */
 :root { --ink-muted: #5a616b; }
-:root[data-theme="dark"] { --ink-muted: #a0a7b1; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -220,7 +203,6 @@ td.err { white-space: normal; min-width: 220px; }
       <span class="co">Northwind Labs Sdn Bhd</span>
       <span class="tag">Mockup, sample data</span>
       <span class="spacer"></span>
-      <button class="btn" id="themeBtn" type="button" aria-label="Switch theme">Dark</button>
     </header>
 
     <main class="content" id="main" tabindex="-1">
@@ -375,13 +357,6 @@ document.addEventListener('click', (ev) => {
     }, 1000);
   }
 });
-
-// Theme: starts from the OS setting, remembers the choice when storage is allowed.
-const root = document.documentElement, themeBtn = $('#themeBtn');
-let saved = null; try { saved = localStorage.getItem('dr-theme'); } catch (e) {}
-const setTheme = (th) => { root.dataset.theme = th; themeBtn.textContent = th === 'dark' ? 'Light' : 'Dark'; try { localStorage.setItem('dr-theme', th); } catch (e) {} };
-setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-themeBtn.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
 
 // Mobile menu
 // While the menu is open the page behind it is inert, focus moves into the menu, and it comes back to Menu on close.
