@@ -114,7 +114,8 @@ h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 .link .ext { margin-left: 3px; width: 10px; height: 10px; }
 .info { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .slot-t { font-weight: 600; }
-.opt { font-weight: 400; color: var(--ink-muted); }
+.addrow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--rule-soft); }
+.addrow .btn:disabled { cursor: not-allowed; }
 .st { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .when { color: var(--ink-soft); font-size: 13px; }
 .why { color: var(--danger-ink); font-size: 13px; }
@@ -258,13 +259,10 @@ const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN);
   if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; if (m < 1440) return Math.round(m / 60) + ' h ago'; return Math.round(m / 1440) + ' days ago'; };
 
 // One slot = one destination sheet. state: none | ok | error. sample = [file, tab, minutes since last sync].
-// Financial Modelling has 3 case slots. The app has no fixed limit, Sadaf said up to 3.
-const SLOTS = [
+// Financial Modelling starts with a Base slot. "Add case" adds more, as in the app (no fixed limit).
+let SLOTS = [
   { id: 'fin',  mod: 'Financial Metrics',    sample: ['Northwind Financials FY26', 'Financials', 12] },
   { id: 'op',   mod: 'Operating Metrics',    sample: ['Northwind KPI Tracker FY26', 'Monthly KPIs', 3] },
-  { id: 'fm1',  mod: 'Financial Modelling',  cs: 'Base',     sample: ['Northwind Forecast FY26, Base', 'Forecast', 8] },
-  { id: 'fm2',  mod: 'Financial Modelling',  cs: 'Downside', sample: ['Northwind Forecast FY26, Downside', 'Downside', 41] },
-  { id: 'fm3',  mod: 'Financial Modelling',  cs: 'Upside',   sample: null },
   { id: 'cash', mod: 'Cash Flow',            sample: ['Northwind Cash Flow', 'Consolidated', 125] },
   { id: 'cap',  mod: 'Cap Table',            sample: ['Northwind Cap Table', 'FP to Sheet', 1] },
   { id: 'arr',  mod: 'ARR',                  sample: ['Northwind ARR Tracker', 'FP to Sheet', 2] },
@@ -275,7 +273,18 @@ const WHY = { token: 'Google no longer lets CFO Desk read this sheet.', gone: "C
 const byId = (id) => SLOTS.find(s => s.id === id);
 const fullName = (s) => s.cs ? `${s.mod}, ${s.cs}` : s.mod;
 
+// Forecast case slots. Names Downside and Upside are the app's suggestions. Cases after those are numbered.
+const FM_NAMES = ['Base', 'Downside', 'Upside'], FM_SAMPLES = [['Northwind Forecast FY26, Base', 'Forecast', 8], ['Northwind Forecast FY26, Downside', 'Downside', 41]];
+const fmSlot = (i) => ({ id: 'fm' + (i + 1), mod: 'Financial Modelling', cs: FM_NAMES[i] || 'Case ' + (i + 1), sample: FM_SAMPLES[i] || null, state: 'none' });
+const fmSlots = () => SLOTS.filter(s => s.mod === 'Financial Modelling');
+function addCase() {
+  const n = fmSlots().length; SLOTS.splice(SLOTS.indexOf(fmSlots()[n - 1]) + 1, 0, fmSlot(n));
+  focusSel = `[data-slot="fm${n + 1}"] .act .btn`; render();
+}
+
 function seed(mode) {
+  SLOTS = SLOTS.filter(s => s.mod !== 'Financial Modelling');
+  SLOTS.splice(SLOTS.findIndex(s => s.id === 'op') + 1, 0, ...[0, 1].slice(0, mode === 'empty' ? 1 : 2).map(fmSlot));
   SLOTS.forEach(s => { s.state = 'none'; s.file = s.tab = s.last = s.why = null;
     if (mode === 'empty' || !s.sample) return;
     [s.file, s.tab] = s.sample; s.last = t(s.sample[2]); s.state = 'ok'; });
@@ -315,7 +324,7 @@ function slotHtml(s) {
   const act = none ? `<button type="button" class="btn btn-primary" data-act="connect" data-id="${s.id}" aria-label="Connect ${full}">Connect</button>`
     : s.state === 'error' ? `<button type="button" class="btn btn-primary" data-act="reconnect" data-id="${s.id}" aria-label="Reconnect ${full}">Reconnect</button>`
     : `<button type="button" class="btn" data-act="sync" data-id="${s.id}" aria-label="Sync ${full} now">Sync now</button>`;
-  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs} case${s.sample ? '' : ' <span class="opt">(optional)</span>'}</div>` : ''}${status}</div><div class="act">${act}</div></div>`;
+  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs.startsWith('Case') ? s.cs : s.cs + ' case'}</div>` : ''}${status}</div><div class="act">${act}</div></div>`;
 }
 
 function render() {
@@ -325,7 +334,9 @@ function render() {
   $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button class="chip" data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join('');
   const cards = [...new Set(SLOTS.map(s => s.mod))].map((m, i) => {
     const rows = SLOTS.filter(s => s.mod === m && matches(s)).map(slotHtml).join('');
-    return rows ? `<section class="card" aria-labelledby="h${i}"><div class="card-h"><h2 id="h${i}">${m}</h2></div>${rows}</section>` : '';
+    const baseOn = byId('fm1').state !== 'none';   // the app greys out Add case until Base is connected
+    const add = m === 'Financial Modelling' && filter === 'all' ? `<div class="addrow"><button type="button" class="btn" data-act="addcase"${baseOn ? '' : ' disabled'}>+ Add case</button>${baseOn ? '' : '<span class="hint">Connect Base first.</span>'}</div>` : '';
+    return rows ? `<section class="card" aria-labelledby="h${i}"><div class="card-h"><h2 id="h${i}">${m}</h2></div>${rows}${add}</section>` : '';
   }).join('');
   const start = filter === 'all' && !n('ok') && !n('error') ? '<p class="start">Nothing is connected yet. Choose Connect on a page below.</p>' : '';
   $('#pages').innerHTML = start + (cards || '<p class="no-match">Nothing matches this filter.</p>');
@@ -394,7 +405,8 @@ document.addEventListener('click', (ev) => {
   const chip = ev.target.closest('[data-filter]'); if (chip) { filter = chip.dataset.filter; focusSel = `[data-filter="${filter}"]`; render(); return; }
   const demo = ev.target.closest('[data-demo]'); if (demo) { seed(demo.dataset.demo); focusSel = null; render(); return; }
   const b = ev.target.closest('[data-act]'); if (!b) return;
-  const s = byId(b.dataset.id), act = b.dataset.act;
+  const act = b.dataset.act; if (act === 'addcase') return addCase();
+  const s = byId(b.dataset.id);
   if (act === 'open') return toast('Mockup: opens ' + s.file + ' in Google Drive.');
   if (act === 'connect' || act === 'reconnect') return openDlg(s, act === 'reconnect');
   if (act === 'sync') {
