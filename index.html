@@ -314,7 +314,7 @@ function slotHtml(s) {
   const act = none ? `<button type="button" class="btn btn-primary" data-act="connect" data-id="${s.id}" aria-label="Connect ${full}">Connect</button>`
     : s.state === 'error' ? `<button type="button" class="btn btn-primary" data-act="reconnect" data-id="${s.id}" aria-label="Reconnect ${full}">Reconnect</button>`
     : `<button type="button" class="btn" data-act="sync" data-id="${s.id}" aria-label="Sync ${full} now">Sync now</button>`;
-  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs} case</div>` : ''}${status}</div><div class="act">${act}</div></div>`;
+  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs} case${s.sample ? '' : ' (optional)'}</div>` : ''}${status}</div><div class="act">${act}</div></div>`;
 }
 
 function render() {
@@ -352,10 +352,10 @@ function draw() {
     b = `<p class="step">Step 2 of 3</p>` + heading('Choose spreadsheet') + '<p class="hint">Mockup of the Google file picker.</p>' +
       `<fieldset class="pickset"><legend class="f">Spreadsheet</legend><div class="pick">${rows}</div></fieldset>` +
       `<label class="f" for="tabSel">Tab</label><select id="tabSel"${s.id === 'cap' ? ' disabled' : ''}>${s.id === 'cap' ? '' : '<option value="">Pick a tab</option>'}${opts}</select>`;
-    f = `<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="next"${fl.file && fl.tab ? '' : ' disabled'}>Next</button>`;
+    f = `${cancel}<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="next"${fl.file && fl.tab ? '' : ' disabled'}>Next</button>`;
   } else if (step === 'confirm') {
     b = `<p class="step">Step 3 of 3</p>` + heading(`Connect ${fullName(s)}`) + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${fl.file}</span>`)}</div><p>CFO Desk writes to the tab "${fl.tab}".</p>`;
-    f = '<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="connect">Connect</button>';
+    f = `${cancel}<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="connect">Connect</button>`;
   } else if (step === 'run') {
     b = heading(reauth ? 'Reconnecting' : 'Connecting') + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${file}</span>`)}</div><p role="status">Sending ${s.mod} data to the sheet.</p>`;
     f = cancel;
