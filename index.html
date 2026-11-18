@@ -111,7 +111,6 @@ h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 .badge::before { content: ""; width: 8px; height: 8px; background: currentColor; }
 .b-ok { background: var(--success-soft); color: var(--success-ink); } .b-ok::before { border-radius: 50%; }
 .b-error { background: var(--danger-soft); color: var(--danger-ink); } .b-error::before { transform: rotate(45deg); }
-.b-stale { background: var(--amber-soft); color: var(--amber-ink); } .b-stale::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .b-none { background: var(--rule-soft); color: var(--ink-soft); } .b-none::before { border-radius: 50%; background: transparent; border: 2px solid currentColor; }
 
 /* Details and run history */
@@ -256,8 +255,6 @@ const PAGES = [
     { kind: 'doc', name: 'Monthly Updates, Oct 2026', sub: 'Google Doc, re-read a few minutes after it is edited', status: 'ok', last: 2750, error: '' } ],
     exports: [] },
 ];
-const STALE_MIN = 1440; // mockup rule: a connection with no refresh for 24 h is "Stale". Needs a backend decision.
-
 const MYT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
 const fmt = (ts) => ts ? MYT.format(ts).replace(',', '') + ' MYT' : 'Never';
 const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN), a = Math.abs(m), s = m < 0 ? 'in ' : '', e = m < 0 ? '' : ' ago';
@@ -266,12 +263,12 @@ const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN), a = Math.ab
 // Turn the minutes-ago offsets into timestamps once. "next" is minutes from now (positive means overdue).
 PAGES.forEach(p => p.conns.forEach(c => { for (const k of ['last', 'imported', 'changed', 'written']) if (c[k] != null) c[k] = t(c[k]); if (c.next != null) c.next = NOW - c.next * MIN; }));
 
-const state = (c) => c.kind === 'none' ? 'none' : c.kind === 'file' ? 'file' : c.status === 'error' ? 'error' : (c.kind !== 'write' && c.kind !== 'doc' && Date.now() - c.last > STALE_MIN * MIN) ? 'stale' : 'ok';
-const LABEL = { ok: 'Healthy', error: 'Needs attention', stale: 'Stale', none: 'Not connected' };
+const state = (c) => c.kind === 'none' ? 'none' : c.kind === 'file' ? 'file' : c.status === 'error' ? 'error' : 'ok';
+const LABEL = { ok: 'Healthy', error: 'Needs attention', none: 'Not connected' };
 
 let filter = 'all', focusSel = null; const open = new Set();
 const $ = (s) => document.querySelector(s);
-const FILTERS = [['all', 'All'], ['error', 'Needs attention'], ['stale', 'Stale'], ['review', 'Rows to review'], ['none', 'Not connected']];
+const FILTERS = [['all', 'All'], ['error', 'Needs attention'], ['review', 'Rows to review'], ['none', 'Not connected']];
 const matches = (c) => filter === 'all' || (filter === 'review' ? !!c.review : state(c) === filter);
 
 function toast(msg, err) { const d = document.createElement('div'); d.className = 'toast' + (err ? ' err' : ''); d.textContent = msg; $('#toasts').append(d); setTimeout(() => d.remove(), 3800); }
@@ -302,7 +299,6 @@ function connHtml(c, pi, ci) {
     <div class="conn-time">${write ? 'Last written' : 'Last refreshed'} <b>${rel(ts)}</b><br><span>${fmt(ts)}</span></div>
     <div class="conn-act">${act}<button class="btn btn-sm" data-act="toggle" data-id="${id}" aria-expanded="${isOpen}" aria-controls="d-${id}">${isOpen ? 'Hide details' : 'Details'}</button></div></div>
     ${err ? `<p class="note note-err"><b>Error:</b> ${err}</p>` : ''}
-    ${s === 'stale' ? `<p class="note note-warn">No refresh for over 24 hours. The figures on the page may be old.</p>` : ''}
     ${c.review ? `<p class="note note-warn">${c.review} new rows in the sheet are not mapped yet. Review them on the page to include them.</p>` : ''}
     ${isOpen ? `<div class="detail" id="d-${id}">${fields(c)}${history(c)}</div>` : ''}</div>`;
 }
@@ -310,7 +306,7 @@ function connHtml(c, pi, ci) {
 function render() {
   const live = PAGES.flatMap(p => p.conns).filter(c => c.kind !== 'none' && c.kind !== 'file');
   const count = (f) => live.filter(c => state(c) === f).length, exports = PAGES.reduce((n, p) => n + p.exports.length, 0);
-  $('#summary').innerHTML = [[live.length, 'Connections'], [count('ok'), 'Healthy'], [count('error') + count('stale'), 'Need attention or stale'], [exports, 'Exports']]
+  $('#summary').innerHTML = [[live.length, 'Connections'], [count('ok'), 'Healthy'], [count('error'), 'Need attention'], [exports, 'Exports']]
     .map(([n, l]) => `<div class="stat"><div class="stat-n">${n}</div><div class="stat-l">${l}</div></div>`).join('');
   $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button class="chip" data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join('');
   $('#pages').innerHTML = PAGES.map((p, pi) => {
