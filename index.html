@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Data Room | CFO Desk mockup</title>
-<meta name="description" content="Clickable mockup of the proposed Data Room page: exports and sheet connection telemetry for every page. Sample data only.">
+<meta name="description" content="Clickable mockup of the proposed Data Room page: connect each page to a Google Sheet and see the live connection. Sample data only.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232563EB'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,8 +76,12 @@ h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 .btn-sm { min-height: 32px; padding: 0 10px; font-size: 12.5px; }
 .icon-btn { min-width: 40px; padding: 0 10px; }
 
+/* Demo bar: a mockup control, not product UI */
+.demo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; padding: 8px 12px; border: 1px dashed var(--amber); border-radius: var(--radius); background: var(--amber-soft); }
+.demo-l { font-size: 12.5px; color: var(--amber-ink); margin-right: 4px; }
+
 /* Summary strip */
-.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 16px; }
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
 .stat { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); }
 .stat-n { font-size: 26px; font-weight: 700; font-family: var(--mono); line-height: 1.1; }
 .stat-l { color: var(--ink-soft); font-size: 12.5px; margin-top: 4px; }
@@ -86,25 +90,36 @@ h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .chip { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); cursor: pointer; font-size: 13px; }
 .chip[aria-pressed="true"] { background: var(--teal-soft); border-color: var(--teal); color: var(--teal); font-weight: 600; }
+.start { color: var(--ink-soft); margin-bottom: 16px; }
 
-/* Page cards */
+/* Module cards and slots */
 .card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 16px; overflow: hidden; }
-.card-h { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--rule-soft); flex-wrap: wrap; }
+.card-h { padding: 14px 18px; border-bottom: 1px solid var(--rule-soft); }
 .card-h h2 { font-size: 16px; font-weight: 600; }
-.route { font-family: var(--mono); font-size: 12px; color: var(--ink-muted); }
-.sec-l { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); padding: 12px 18px 4px; }
-.conn { border-top: 1px solid var(--rule-soft); }
-.conn:first-of-type { border-top: 0; }
-.conn-row { display: flex; align-items: center; gap: 14px; padding: 12px 18px; flex-wrap: wrap; }
-.conn-main { flex: 1 1 260px; min-width: 0; }
-.conn-name { font-weight: 600; }
-.conn-sub { color: var(--ink-soft); font-size: 12.5px; }
-.conn-time { font-size: 12.5px; color: var(--ink-soft); flex: 0 1 190px; }
-.conn-time b { font-weight: 500; color: var(--ink); }
-.conn-act { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.note { margin: 0 18px 12px; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 12.5px; }
-.note-err { background: var(--danger-soft); color: var(--danger-ink); border: 1px solid var(--danger); }
-.note-warn { background: var(--amber-soft); color: var(--amber-ink); border: 1px solid var(--amber); }
+.slot { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; padding: 18px; border-top: 1px solid var(--rule-soft); }
+.card-h + .slot { border-top: 0; }
+.flow { display: flex; align-items: flex-start; gap: 6px; flex: 0 0 auto; }
+.node { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 140px; }
+.ico { display: grid; place-items: center; width: 52px; height: 52px; border-radius: var(--radius); }
+.ico svg { width: 28px; height: 28px; }
+.ico.db { background: var(--blue-soft); color: var(--teal); }
+.ico.sheet { background: var(--success-soft); color: var(--success); }
+.ico.empty { border: 2px dashed var(--ink-faint); color: var(--ink-muted); }
+.pipe { width: 88px; height: 24px; margin-top: 14px; flex: none; }
+.pipe.ok { color: var(--teal); } .pipe.error { color: var(--danger); } .pipe.none { color: var(--ink-faint); }
+.pipe .brk { fill: currentColor; }
+.nl { font-size: 12.5px; text-align: center; max-width: 140px; line-height: 1.3; overflow-wrap: anywhere; }
+.nl.muted { color: var(--ink-muted); } .nl.strong { font-weight: 600; }
+.link { background: none; border: 0; padding: 0; color: var(--teal); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-size: 12.5px; line-height: 1.3; text-align: center; overflow-wrap: anywhere; max-width: 140px; }
+.link .ext { margin-left: 3px; width: 10px; height: 10px; }
+.info { flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.slot-t { font-weight: 600; }
+.st { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.when { color: var(--ink-soft); font-size: 13px; }
+.why { color: var(--danger-ink); font-size: 13px; }
+.act { flex: 0 0 auto; }
+.no-match { padding: 40px 16px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--rule); border-radius: var(--radius); }
+.hint { color: var(--ink-muted); font-size: 12.5px; }
 
 /* Badges: shape plus text, never colour alone */
 .badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
@@ -113,33 +128,37 @@ h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 .b-error { background: var(--danger-soft); color: var(--danger-ink); } .b-error::before { transform: rotate(45deg); }
 .b-none { background: var(--rule-soft); color: var(--ink-soft); } .b-none::before { border-radius: 50%; background: transparent; border: 2px solid currentColor; }
 
-/* Details and run history */
-.detail { padding: 4px 18px 16px; background: var(--bg); border-top: 1px solid var(--rule-soft); }
-.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 20px; padding: 14px 0 10px; }
-.dl dt { font-size: 11.5px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; }
-.dl dd { font-size: 13px; overflow-wrap: anywhere; }
-.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--surface); }
-table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
-th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule-soft); white-space: nowrap; }
-th { color: var(--ink-muted); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; }
-tr:last-child td { border-bottom: 0; }
-td.err { white-space: normal; min-width: 220px; }
-.hint { color: var(--ink-muted); font-size: 12.5px; padding: 6px 0; }
-
-/* Exports */
-.exports { display: flex; flex-wrap: wrap; gap: 10px; padding: 6px 18px 16px; }
-.exp { display: flex; align-items: center; gap: 10px; border: 1px solid var(--rule); border-radius: var(--radius); padding: 8px 8px 8px 12px; background: var(--surface); }
-.exp-t { font-size: 13px; font-weight: 500; }
-.exp-f { font-family: var(--mono); font-size: 11.5px; color: var(--ink-muted); }
-.empty { color: var(--ink-muted); padding: 10px 18px 16px; font-size: 13px; }
-.no-match { padding: 40px 16px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--rule); border-radius: var(--radius); }
+/* Connect dialog */
+dialog { margin: auto; border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 0; width: min(480px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-lg); }
+dialog::backdrop { background: rgba(0,0,0,0.4); }
+.dlg-b { padding: 22px 24px 8px; }
+.dlg-b h2 { font-size: 18px; font-weight: 700; }
+.dlg-b h2:focus { outline: none; }
+.dlg-b p { margin-top: 6px; color: var(--ink-soft); }
+.dlg-b .btn-wide { width: 100%; margin-top: 16px; }
+.dlg-f { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 24px 20px; }
+.dlg-f .btn:disabled { cursor: not-allowed; }
+.step { font-size: 12px; color: var(--ink-muted); margin-bottom: 4px; }
+.dlg-flow { display: flex; justify-content: center; margin: 18px 0 6px; }
+.pickset { border: 0; margin-top: 12px; }
+.f { display: block; font-size: 12px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 12px 0 4px; padding: 0; }
+.pick { border: 1px solid var(--rule); border-radius: var(--radius-sm); }
+.pick-row { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 12px; cursor: pointer; border-top: 1px solid var(--rule-soft); }
+.pick-row:first-of-type { border-top: 0; }
+.pick-row:has(input:checked) { background: var(--teal-soft); }
+.pick-row svg { width: 18px; height: 18px; color: var(--success); flex: none; }
+.pick-row small { color: var(--ink-muted); margin-left: auto; font-size: 12px; white-space: nowrap; }
+select { width: 100%; min-height: 40px; padding: 0 10px; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--surface); font: inherit; color: var(--ink); }
 
 /* Toast */
 #toasts { position: fixed; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 50; }
 .toast { background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); font-size: 13px; max-width: 340px; }
 .toast.err { background: var(--danger); color: #fff; }
 
-@media (prefers-reduced-motion: no-preference) { .toast { animation: up .18s ease-out; } @keyframes up { from { transform: translateY(6px); opacity: 0; } } }
+@media (prefers-reduced-motion: no-preference) {
+  .toast { animation: up .18s ease-out; } @keyframes up { from { transform: translateY(6px); opacity: 0; } }
+  .pipe.ok .dash { animation: flow 1s linear infinite; } @keyframes flow { to { stroke-dashoffset: -12; } }
+}
 
 @media (max-width: 768px) {
   .app { grid-template-columns: 1fr; }
@@ -151,9 +170,12 @@ td.err { white-space: normal; min-width: 220px; }
   .topbar { padding: 8px 16px; }
   .topbar .co { display: none; }
   .content { padding: 20px 16px; }
-  .summary { grid-template-columns: repeat(2, 1fr); }
+  .stat { padding: 12px; }
   .btn, .chip, .btn-sm, .nav-item { min-height: 44px; }
-  .conn-time { flex-basis: 100%; }
+  .link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  .node { width: 100px; } .nl, .link { max-width: 100px; }
+  .pipe { width: 56px; }
+  .slot { padding: 16px; }
   #toasts { left: 16px; right: 16px; }
   .toast { max-width: none; }
 }
@@ -206,7 +228,15 @@ td.err { white-space: normal; min-width: 220px; }
 
     <main class="content" id="main" tabindex="-1">
       <h1>Data Room</h1>
-      <p class="page-desc">Every export and every sheet connection in the app, grouped by the page that uses it. Times are Asia/Kuala_Lumpur (MYT).</p>
+      <p class="page-desc">Connect each page to a Google Sheet. CFO Desk keeps the sheet up to date.</p>
+
+      <div class="demo" role="group" aria-label="Demo states">
+        <span class="tag">Mockup</span>
+        <span class="demo-l">Jump to a state:</span>
+        <button class="btn btn-sm" type="button" data-demo="empty">Empty</button>
+        <button class="btn btn-sm" type="button" data-demo="healthy">Healthy</button>
+        <button class="btn btn-sm" type="button" data-demo="broken">Broken</button>
+      </div>
 
       <section class="summary" aria-label="Summary" id="summary"></section>
 
@@ -216,141 +246,159 @@ td.err { white-space: normal; min-width: 220px; }
     </main>
   </div>
 </div>
+<dialog id="dlg" aria-labelledby="dlgT"></dialog>
 <div id="toasts" role="status" aria-live="polite"></div>
 
 <script>
 // All data below is invented sample data. Static strings only, so nothing here needs escaping.
-const NOW = Date.now(), MIN = 60000, ACCT = 'founder@example.test';
-const t = (minAgo) => NOW - minAgo * MIN;            // minutes ago -> timestamp
-const runs = (last, statuses, err) => statuses.map((s, i) => ({ at: t(last + i * 15), sec: [2.1, 1.8, 2.4, 1.9, 2.2][i % 5], ok: s === 's', err: s === 'e' ? err : '' }));
+const MIN = 60000, ACCT = 'founder@example.test';
+const t = (minAgo) => Date.now() - minAgo * MIN;
+const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN);
+  if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; if (m < 1440) return Math.round(m / 60) + ' h ago'; return Math.round(m / 1440) + ' days ago'; };
 
-// kind: sheet (read) | write (write-only sheet) | xero | doc | file | none
-const PAGES = [
-  { name: 'Financial Metrics', route: '/upload/financials', conns: [
-    { kind: 'xero', name: 'Northwind Labs Sdn Bhd', sub: 'Xero, refreshed hourly', status: 'ok', last: 38, next: -22, error: '' } ],
-    exports: [{ label: 'Export CSV', file: 'financial-metrics.csv' }] },
-  { name: 'Operating Metrics', route: '/upload/metrics', conns: [
-    { kind: 'sheet', name: 'KPI Tracker FY26', sub: 'Google Sheet, tab "Monthly KPIs", refreshed every 15 min', status: 'ok', last: 2880, next: 2865, imported: 4320, changed: 2870, review: 3, error: '',
-      runs: runs(2880, ['s','s','s','s','s']) } ],
-    exports: [{ label: 'Export CSV', file: 'operating-metrics.csv' }] },
-  { name: 'Financial Modelling', route: '/financial-modelling', conns: [
-    { kind: 'sheet', name: 'FY26 Forecast Model, Base case', sub: 'Forecast source, tab "Forecast"', status: 'ok', last: 11, next: -4, imported: 1440, changed: 190, error: '', runs: runs(11, ['s','s','s','s','s']) },
-    { kind: 'sheet', name: 'FY26 Forecast Model, Downside case', sub: 'Forecast source, tab "Downside"', status: 'error', last: 47, next: -13, imported: 5760, changed: 600,
-      error: 'The tab "Downside" was not found in this spreadsheet. Pick the tab again on the Forecast source step.',
-      runs: runs(47, ['e','e','e','s','s'], 'The tab "Downside" was not found in this spreadsheet.') },
-    { kind: 'none', name: 'Case 3', sub: 'Optional third forecast case' },
-    { kind: 'write', name: 'FY26 Forecast Model', sub: 'Actuals source, writes to tab "FP to Sheet"', status: 'ok', written: 2900, writeError: '' } ],
-    exports: [{ label: 'Consolidated, Base case', file: 'consolidated.csv' }, { label: 'Consolidated, Downside case', file: 'consolidated-downside.csv' }] },
-  { name: 'Cash Flow', route: '/cash-flow', conns: [
-    { kind: 'file', name: 'Bank statements', sub: 'Uploaded as PDF, CSV or Excel. There is no sheet connection on this page.' } ],
-    exports: [{ label: 'Run export, CSV', file: 'oct-2026-statement.csv' }, { label: 'Run export, Excel', file: 'oct-2026-statement.xlsx' }, { label: 'Consolidated cash flow', file: 'cash-flow.xlsx' }] },
-  { name: 'Cap Table', route: '/valuation/cap-table', conns: [
-    { kind: 'write', name: 'Northwind Cap Table', sub: 'Writes to tab "FP to Sheet"', status: 'error', written: 14400,
-      writeError: 'Google access was revoked. Connect Google again on the Cap Table page.' } ],
-    exports: [] },
-  { name: 'ARR Tracker', route: '/arr/overview', conns: [
-    { kind: 'write', name: 'Northwind ARR Tracker', sub: 'Writes to tab "FP to Sheet"', status: 'ok', written: 310, writeError: '' } ],
-    exports: [{ label: 'Download as .xlsx', file: 'arr-tracker.xlsx' }] },
-  { name: 'Organizational Update', route: '/org-update', conns: [
-    { kind: 'doc', name: 'Monthly Updates, Oct 2026', sub: 'Google Doc, re-read a few minutes after it is edited', status: 'ok', last: 2750, error: '' } ],
-    exports: [] },
+// One slot = one destination sheet. state: none | ok | error. sample = [file, tab, minutes since last sync].
+// Financial Modelling has 3 case slots. The app has no fixed limit, Sadaf said up to 3.
+const SLOTS = [
+  { id: 'fin',  mod: 'Financial Metrics',    sample: ['Northwind Financials FY26', 'Financials', 12] },
+  { id: 'op',   mod: 'Operating Metrics',    sample: ['Northwind KPI Tracker FY26', 'Monthly KPIs', 3] },
+  { id: 'fm1',  mod: 'Financial Modelling',  cs: 'Base',     sample: ['Northwind Forecast FY26, Base', 'Forecast', 8] },
+  { id: 'fm2',  mod: 'Financial Modelling',  cs: 'Downside', sample: ['Northwind Forecast FY26, Downside', 'Downside', 41] },
+  { id: 'fm3',  mod: 'Financial Modelling',  cs: 'Upside',   sample: null },
+  { id: 'cash', mod: 'Cash Flow',            sample: ['Northwind Cash Flow', 'Consolidated', 125] },
+  { id: 'cap',  mod: 'Cap Table',            sample: ['Northwind Cap Table', 'FP to Sheet', 1] },
+  { id: 'arr',  mod: 'ARR',                  sample: ['Northwind ARR Tracker', 'FP to Sheet', 2] },
+  { id: 'org',  mod: 'Organizational Update', sample: ['Northwind Monthly Updates', 'Updates', 20] },
 ];
-const MYT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
-const fmt = (ts) => ts ? MYT.format(ts).replace(',', '') + ' MYT' : 'Never';
-const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN), a = Math.abs(m), s = m < 0 ? 'in ' : '', e = m < 0 ? '' : ' ago';
-  if (a < 1) return 'just now'; if (a < 60) return s + a + ' min' + e; if (a < 1440) return s + Math.round(a / 60) + ' h' + e; return s + Math.round(a / 1440) + ' days' + e; };
+// Broken reasons use the wording of the app (googleClient.ts messages).
+const WHY = { token: 'Google no longer lets CFO Desk read this sheet.', gone: "CFO Desk can't open this sheet any more." };
+const byId = (id) => SLOTS.find(s => s.id === id);
+const fullName = (s) => s.cs ? `${s.mod}, ${s.cs}` : s.mod;
 
-// Turn the minutes-ago offsets into timestamps once. "next" is minutes from now (positive means overdue).
-PAGES.forEach(p => p.conns.forEach(c => { for (const k of ['last', 'imported', 'changed', 'written']) if (c[k] != null) c[k] = t(c[k]); if (c.next != null) c.next = NOW - c.next * MIN; }));
+function seed(mode) {
+  SLOTS.forEach(s => { s.state = 'none'; s.file = s.tab = s.last = s.why = null;
+    if (mode === 'empty' || !s.sample) return;
+    [s.file, s.tab] = s.sample; s.last = t(s.sample[2]); s.state = 'ok'; });
+  if (mode === 'broken') { Object.assign(byId('cap'), { state: 'error', why: WHY.token }); Object.assign(byId('fm2'), { state: 'error', why: WHY.gone }); }
+}
 
-const state = (c) => c.kind === 'none' ? 'none' : c.kind === 'file' ? 'file' : c.status === 'error' ? 'error' : 'ok';
-const LABEL = { ok: 'Healthy', error: 'Needs attention', none: 'Not connected' };
-
-let filter = 'all', focusSel = null; const open = new Set();
-const $ = (s) => document.querySelector(s);
-const FILTERS = [['all', 'All'], ['error', 'Needs attention'], ['review', 'Rows to review'], ['none', 'Not connected']];
-const matches = (c) => filter === 'all' || (filter === 'review' ? !!c.review : state(c) === filter);
+let filter = 'all', focusSel = null;
+const $ = (s, r = document) => r.querySelector(s);
+const FILTERS = [['all', 'All'], ['error', 'Needs attention'], ['none', 'Not connected']];
+const LABEL = { ok: 'Live', error: 'Needs reconnect', none: 'Not connected' };
+const matches = (s) => filter === 'all' || s.state === filter;
 
 function toast(msg, err) { const d = document.createElement('div'); d.className = 'toast' + (err ? ' err' : ''); d.textContent = msg; $('#toasts').append(d); setTimeout(() => d.remove(), 3800); }
 
-function fields(c) {
-  const f = [];
-  if (c.kind === 'xero') f.push(['Organisation', c.name], ['Last refreshed', fmt(c.last)], ['Next refresh', fmt(c.next)]);
-  else if (c.kind === 'doc') f.push(['Document', c.name], ['Google account', ACCT], ['Last refreshed', fmt(c.last)], ['Last error', c.error || 'None']);
-  else if (c.kind === 'write') f.push(['Spreadsheet', c.name], ['Google account', ACCT], ['Last written', fmt(c.written)], ['Last write error', c.writeError || 'None']);
-  else f.push(['Spreadsheet', c.name], ['Google account', ACCT], ['Last refreshed', fmt(c.last)], ['Next refresh', c.next < Date.now() ? 'Overdue' : fmt(c.next)], ['Last imported', fmt(c.imported)], ['Sheet last changed', fmt(c.changed)], ['Last error', c.error || 'None']);
-  return '<dl class="dl">' + f.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('') + '</dl>';
-}
-function history(c) {
-  if (!c.runs) return '<p class="hint">Run history is not recorded for this connection type today.</p>';
-  return `<div class="table-wrap"><table><caption class="hint" style="text-align:left;caption-side:top">Last ${Math.min(c.runs.length, 20)} refresh runs</caption><thead><tr><th>Started</th><th>Duration</th><th>Result</th><th>Error</th></tr></thead><tbody>` +
-    c.runs.slice(0, 20).map(r => `<tr><td>${fmt(r.at)}</td><td>${r.sec.toFixed(1)} s</td><td><span class="badge ${r.ok ? 'b-ok' : 'b-error'}">${r.ok ? 'Success' : 'Error'}</span></td><td class="err">${r.err || ''}</td></tr>`).join('') + '</tbody></table></div>';
-}
+// Icons. The database icon is the cylinder from the sidebar. The sheet icon follows the app's SheetIcon (rectangle with grid lines), drawn larger.
+const ICON_DB = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg>';
+const ICON_SHEET = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M2 6.5h12M2 10h12M6.5 6.5V14"/></svg>';
+const ICON_PLUS = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>';
+const ICON_EXT = '<svg class="ext" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M5 2H2v8h8V7M7 2h3v3M10 2L5.5 6.5"/></svg>';
+const PIPE = {
+  ok: '<path class="dash" d="M2 12h74" stroke-dasharray="6 6"/><path d="M76 6l8 6-8 6"/>',
+  error: '<path d="M2 12h30M56 12h20"/><path d="M76 6l8 6-8 6"/><path class="brk" d="M44 5l7 7-7 7-7-7z"/>',   // arrow with a break and a diamond
+  none: '<path d="M2 12h74" stroke-dasharray="3 6"/><path d="M76 6l8 6-8 6"/>',
+};
+const node = (cls, icon, label) => `<div class="node"><span class="ico ${cls}">${icon}</span>${label}</div>`;
+// Database to sheet picture. sheetLabel is the HTML under the sheet icon.
+const flow = (state, sheetLabel) => `<div class="flow">${node('db', ICON_DB, '<span class="nl">CFO Desk</span>')}<svg class="pipe ${state}" viewBox="0 0 88 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PIPE[state]}</svg>${state === 'none' ? node('empty', ICON_PLUS, '<span class="nl muted">No sheet connected</span>') : node('sheet', ICON_SHEET, sheetLabel)}</div>`;
 
-function connHtml(c, pi, ci) {
-  const s = state(c), id = `c${pi}-${ci}`, isOpen = open.has(id);
-  if (s === 'none') return `<div class="conn"><div class="conn-row"><div class="conn-main"><div class="conn-name">${c.name}</div><div class="conn-sub">${c.sub}</div></div><span class="badge b-none">Not connected</span><div class="conn-act"><button class="btn btn-sm" data-act="connect">Connect</button></div></div></div>`;
-  if (s === 'file') return `<div class="conn"><div class="conn-row"><div class="conn-main"><div class="conn-name">${c.name}</div><div class="conn-sub">${c.sub}</div></div></div></div>`;
-  const write = c.kind === 'write', ts = write ? c.written : c.last, err = write ? c.writeError : c.error;
-  const act = `<button class="btn btn-sm" data-act="${write ? 'push' : 'refresh'}" data-id="${pi}-${ci}">${write ? 'Push now' : 'Refresh now'}</button>`;
-  return `<div class="conn"><div class="conn-row">
-    <div class="conn-main"><div class="conn-name">${c.name}</div><div class="conn-sub">${c.sub}</div></div>
-    <span class="badge b-${s}">${LABEL[s]}</span>
-    <div class="conn-time">${write ? 'Last written' : 'Last refreshed'} <b>${rel(ts)}</b><br><span>${fmt(ts)}</span></div>
-    <div class="conn-act">${act}<button class="btn btn-sm" data-act="toggle" data-id="${id}" aria-expanded="${isOpen}" aria-controls="d-${id}">${isOpen ? 'Hide details' : 'Details'}</button></div></div>
-    ${err ? `<p class="note note-err"><b>Error:</b> ${err}</p>` : ''}
-    ${c.review ? `<p class="note note-warn">${c.review} new rows in the sheet are not mapped yet. Review them on the page to include them.</p>` : ''}
-    ${isOpen ? `<div class="detail" id="d-${id}">${fields(c)}${history(c)}</div>` : ''}</div>`;
+function slotHtml(s) {
+  const full = fullName(s), none = s.state === 'none';
+  const link = none ? '' : `<button type="button" class="link" data-act="open" data-id="${s.id}" aria-label="Open ${s.file} in Drive">${s.file}${ICON_EXT}</button>`;
+  const status = s.state === 'ok'
+    ? `<div class="st"><span class="badge b-ok">${LABEL.ok}</span><span class="when">Synced ${rel(s.last)}</span></div>`
+    : s.state === 'error'
+      ? `<span class="badge b-error">${LABEL.error}</span><p class="why">${s.why}</p>`
+      : `<span class="badge b-none">${LABEL.none}</span>`;
+  const act = none ? `<button type="button" class="btn btn-primary" data-act="connect" data-id="${s.id}" aria-label="Connect ${full}">Connect</button>`
+    : s.state === 'error' ? `<button type="button" class="btn btn-primary" data-act="reconnect" data-id="${s.id}" aria-label="Reconnect ${full}">Reconnect</button>`
+    : `<button type="button" class="btn" data-act="sync" data-id="${s.id}" aria-label="Sync ${full} now">Sync now</button>`;
+  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs} case</div>` : ''}${status}</div><div class="act">${act}</div></div>`;
 }
 
 function render() {
-  const live = PAGES.flatMap(p => p.conns).filter(c => c.kind !== 'none' && c.kind !== 'file');
-  const count = (f) => live.filter(c => state(c) === f).length, exports = PAGES.reduce((n, p) => n + p.exports.length, 0);
-  $('#summary').innerHTML = [[live.length, 'Connections'], [count('ok'), 'Healthy'], [count('error'), 'Need attention'], [exports, 'Exports']]
-    .map(([n, l]) => `<div class="stat"><div class="stat-n">${n}</div><div class="stat-l">${l}</div></div>`).join('');
+  const n = (st) => SLOTS.filter(s => s.state === st).length;
+  $('#summary').innerHTML = [[n('ok'), 'Live'], [n('error'), 'Need attention'], [n('none'), 'Not connected']]
+    .map(([k, l]) => `<div class="stat"><div class="stat-n">${k}</div><div class="stat-l">${l}</div></div>`).join('');
   $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button class="chip" data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join('');
-  $('#pages').innerHTML = PAGES.map((p, pi) => {
-    const rows = p.conns.map((c, ci) => matches(c) ? connHtml(c, pi, ci) : '').join('');
-    if (!rows) return '';
-    const ex = filter !== 'all' ? '' : `<div class="sec-l">Exports</div>` + (p.exports.length
-      ? `<div class="exports">${p.exports.map((e, ei) => `<div class="exp"><div><div class="exp-t">${e.label}</div><div class="exp-f">${e.file}</div></div><button class="btn btn-sm btn-primary" data-act="export" data-id="${pi}-${ei}" aria-label="Download ${e.label}, ${e.file}">Download</button></div>`).join('')}</div>`
-      : `<p class="empty">No exports on this page.</p>`);
-    return `<section class="card" aria-labelledby="h${pi}"><div class="card-h"><h2 id="h${pi}">${p.name}</h2><span class="route">${p.route}</span><span class="spacer"></span><button class="btn btn-sm" data-act="open" data-route="${p.route}">Open page</button></div><div class="sec-l">${p.conns.some(c => c.kind === 'file') ? 'Source' : 'Connections'}</div>${rows}${ex}</section>`;
-  }).join('') || '<p class="no-match">Nothing matches this filter.</p>';
-  if (focusSel) $(focusSel)?.focus();
+  const cards = [...new Set(SLOTS.map(s => s.mod))].map((m, i) => {
+    const rows = SLOTS.filter(s => s.mod === m && matches(s)).map(slotHtml).join('');
+    return rows ? `<section class="card" aria-labelledby="h${i}"><div class="card-h"><h2 id="h${i}">${m}</h2></div>${rows}</section>` : '';
+  }).join('');
+  const start = filter === 'all' && !n('ok') && !n('error') ? '<p class="start">Nothing is connected yet. Choose Connect on a page below.</p>' : '';
+  $('#pages').innerHTML = start + (cards || '<p class="no-match">Nothing matches this filter.</p>');
+  if (focusSel) ($(focusSel) || $(`[data-filter="${filter}"]`))?.focus();   // the slot may leave the current filter
 }
 
-const busy = (btn, label) => { btn.disabled = true; btn.dataset.l = btn.textContent; btn.textContent = label; };
-const ids = (s) => s.split('-').map(Number);
+// Connect and reconnect dialog. fl = { s: slot, step, reauth, file, tab, timer }
+const dlg = $('#dlg'); let fl = null;
+const FILES = ['Board pack data FY26', 'Untitled spreadsheet'], DATES = ['12/11/2026', '03/11/2026', '28/10/2026'], TABS = ['Summary', 'Monthly', 'FP to Sheet'];
+const defFile = (s) => s.sample ? s.sample[0] : `Northwind Forecast FY26, ${s.cs}`;
+const heading = (h) => `<h2 id="dlgT" tabindex="-1">${h}</h2>`;
+const cancel = '<button type="button" class="btn" data-d="cancel">Cancel</button>';
+
+function draw() {
+  const { s, step, reauth } = fl, file = reauth ? s.file : fl.file;
+  let b = '', f = '';
+  if (step === 'google') {
+    b = reauth ? heading('Reconnect Google') + `<p>CFO Desk lost access to ${s.file}. Sign in again to restart the feed.</p>`
+      : `<p class="step">Step 1 of 3</p>` + heading('Continue with Google') + '<p>CFO Desk can only open the spreadsheets you pick. It cannot see your other files.</p>';
+    b += `<button type="button" class="btn btn-primary btn-wide" data-d="go">Continue as ${ACCT}</button>`;
+    f = cancel;
+  } else if (step === 'pick') {
+    const rows = [defFile(s), ...FILES].map((n, i) => `<label class="pick-row"><input type="radio" name="file" value="${n}"${fl.file === n ? ' checked' : ''}>${ICON_SHEET}<span>${n}</span><small>Edited ${DATES[i]}</small></label>`).join('');
+    const opts = TABS.map(x => `<option${fl.tab === x ? ' selected' : ''}>${x}</option>`).join('');
+    b = `<p class="step">Step 2 of 3</p>` + heading('Choose spreadsheet') + '<p class="hint">Mockup of the Google file picker.</p>' +
+      `<fieldset class="pickset"><legend class="f">Spreadsheet</legend><div class="pick">${rows}</div></fieldset>` +
+      `<label class="f" for="tabSel">Tab</label><select id="tabSel"${s.id === 'cap' ? ' disabled' : ''}>${s.id === 'cap' ? '' : '<option value="">Pick a tab</option>'}${opts}</select>`;
+    f = `<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="next"${fl.file && fl.tab ? '' : ' disabled'}>Next</button>`;
+  } else if (step === 'confirm') {
+    b = `<p class="step">Step 3 of 3</p>` + heading(`Connect ${fullName(s)}`) + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${fl.file}</span>`)}</div><p>CFO Desk writes to the tab "${fl.tab}".</p>`;
+    f = '<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="connect">Connect</button>';
+  } else if (step === 'run') {
+    b = heading(reauth ? 'Reconnecting' : 'Connecting') + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${file}</span>`)}</div><p role="status">Sending ${s.mod} data to the sheet.</p>`;
+    f = cancel;
+  } else {
+    b = heading(reauth ? 'Reconnected' : 'Connected') + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${file}</span>`)}</div><div class="st"><span class="badge b-ok">Live</span><span class="when">The feed runs on its own.</span></div>`;
+    f = '<button type="button" class="btn btn-primary" data-d="done">Done</button>';
+  }
+  dlg.innerHTML = `<div class="dlg-b">${b}</div><div class="dlg-f">${f}</div>`;
+  dlg.querySelector('h2').focus();
+}
+function commit() {
+  const { s, reauth } = fl; if (!reauth) { s.file = fl.file; s.tab = fl.tab; }
+  Object.assign(s, { state: 'ok', last: Date.now(), why: null }); fl.step = 'done'; draw();
+}
+function openDlg(s, reauth) {
+  fl = { s, reauth, step: 'google', file: '', tab: s.id === 'cap' ? 'FP to Sheet' : '', timer: 0 };
+  focusSel = `[data-slot="${s.id}"] .act .btn`; dlg.showModal(); draw();
+}
+dlg.addEventListener('click', (e) => {
+  const d = e.target.closest('[data-d]')?.dataset.d; if (!d || !fl) return;
+  if (d === 'cancel' || d === 'done') return dlg.close();
+  fl.step = { go: fl.reauth ? 'run' : 'pick', next: 'confirm', connect: 'run', back: fl.step === 'confirm' ? 'pick' : 'google' }[d];
+  draw(); if (fl.step === 'run') fl.timer = setTimeout(commit, 1500);
+});
+dlg.addEventListener('change', (e) => {
+  if (e.target.name === 'file') fl.file = e.target.value; else if (e.target.id === 'tabSel') fl.tab = e.target.value;
+  $('[data-d="next"]', dlg).disabled = !(fl.file && fl.tab);
+});
+dlg.addEventListener('close', () => { clearTimeout(fl?.timer); fl = null; render(); });
+
+const busy = (btn, label) => { btn.disabled = true; btn.textContent = label; };
 
 document.addEventListener('click', (ev) => {
+  if (ev.target.closest('dialog')) return;
   const chip = ev.target.closest('[data-filter]'); if (chip) { filter = chip.dataset.filter; focusSel = `[data-filter="${filter}"]`; render(); return; }
+  const demo = ev.target.closest('[data-demo]'); if (demo) { seed(demo.dataset.demo); focusSel = null; render(); return; }
   const b = ev.target.closest('[data-act]'); if (!b) return;
-  focusSel = b.dataset.id ? `[data-act="${b.dataset.act}"][data-id="${b.dataset.id}"]` : null;
-  const act = b.dataset.act;
-  if (act === 'toggle') { open.has(b.dataset.id) ? open.delete(b.dataset.id) : open.add(b.dataset.id); render(); document.querySelector(`[data-act="toggle"][data-id="${b.dataset.id}"]`)?.focus(); return; }
-  if (act === 'connect') return toast('Mockup: opens the connect panel for this page in the real app.');
-  if (act === 'open') return toast('Mockup: opens ' + b.dataset.route + ' in the real app.');
-  if (act === 'export') {
-    const [pi, ei] = ids(b.dataset.id), e = PAGES[pi].exports[ei]; busy(b, 'Preparing');
-    setTimeout(() => {
-      if (e.file.endsWith('.csv')) { // same UTF-8 BOM pattern as lib/download.ts
-        const blob = new Blob(['﻿' + 'Account,Sep 2026,Oct 2026\nRevenue (RM),182400,196150\nCost of sales (RM),74210,79880\nGross profit (RM),108190,116270'], { type: 'text/csv;charset=utf-8;' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = e.file; document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
-        toast('Downloaded ' + e.file + ' (sample data)');
-      } else toast('Mockup: the real app would download ' + e.file + '.');
-      b.disabled = false; b.textContent = b.dataset.l; b.focus();
-    }, 700);
-    return;
-  }
-  if (act === 'refresh' || act === 'push') {
-    const [pi, ci] = ids(b.dataset.id), c = PAGES[pi].conns[ci], now = Date.now(); busy(b, act === 'push' ? 'Pushing' : 'Refreshing');
-    setTimeout(() => {
-      if (c.status === 'error') { if (act === 'refresh') { c.runs?.unshift({ at: now, sec: 1.2, ok: false, err: c.error }); } toast((act === 'push' ? 'Push failed: ' + c.writeError : 'Refresh failed again. Fix the error on the page first.'), true); }
-      else if (act === 'push') { c.written = now; toast('Pushed to ' + c.name + '.'); }
-      else { c.last = now; c.next = now + 15 * MIN; c.runs?.unshift({ at: now, sec: 2, ok: true, err: '' }); toast('Refreshed ' + c.name + '.'); }
-      render();
-    }, 1000);
+  const s = byId(b.dataset.id), act = b.dataset.act;
+  if (act === 'open') return toast('Mockup: opens ' + s.file + ' in Google Drive.');
+  if (act === 'connect' || act === 'reconnect') return openDlg(s, act === 'reconnect');
+  if (act === 'sync') {
+    focusSel = `[data-slot="${s.id}"] .act .btn`; busy(b, 'Syncing');
+    setTimeout(() => { s.last = Date.now(); toast('Synced ' + s.file + '.'); render(); }, 900);
   }
 });
 
@@ -362,6 +410,7 @@ $('#scrim').addEventListener('click', () => setNav(false));
 $('#closeBtn').addEventListener('click', () => setNav(false));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setNav(false); });
 
+seed('empty');
 render();
 </script>
 </body>
