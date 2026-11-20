@@ -119,7 +119,7 @@ h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
 .st { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .when { color: var(--ink-soft); font-size: 13px; }
 .why { color: var(--danger-ink); font-size: 13px; }
-.act { flex: 0 0 auto; }
+.act { flex: 0 0 auto; display: flex; flex-direction: column; gap: 6px; }
 .no-match { padding: 40px 16px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--rule); border-radius: var(--radius); }
 .hint { color: var(--ink-muted); font-size: 12.5px; }
 
@@ -145,10 +145,14 @@ dialog::backdrop { background: rgba(0,0,0,0.4); }
 .pickset { border: 0; margin-top: 12px; }
 .f { display: block; font-size: 12px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 12px 0 4px; padding: 0; }
 .pick { border: 1px solid var(--rule); border-radius: var(--radius-sm); }
-.pick-row { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 12px; cursor: pointer; border-top: 1px solid var(--rule-soft); }
+.pick-row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 6px 12px; cursor: pointer; border: 0; border-top: 1px solid var(--rule-soft); background: none; text-align: left; }
 .pick-row:first-of-type { border-top: 0; }
-.pick-row:has(input:checked) { background: var(--teal-soft); }
+.pick-row:hover { background: var(--sidebar-hover); }
+.pick-row[aria-pressed="true"] { background: var(--teal-soft); font-weight: 600; }
+.pick-row:focus-visible { outline-offset: -2px; }
 .pick-row svg { width: 18px; height: 18px; color: var(--success); flex: none; }
+.pick-row .fold { color: var(--ink-muted); }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-bottom: 8px; }
 .pick-row small { color: var(--ink-muted); margin-left: auto; font-size: 12px; white-space: nowrap; }
 select { width: 100%; min-height: 40px; padding: 0 10px; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--surface); font: inherit; color: var(--ink); }
 
@@ -259,23 +263,22 @@ const rel = (ts) => { const m = Math.round((Date.now() - ts) / MIN);
   if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; if (m < 1440) return Math.round(m / 60) + ' h ago'; return Math.round(m / 1440) + ' days ago'; };
 
 // One slot = one destination sheet. state: none | ok | error. sample = [file, tab, minutes since last sync].
-// Financial Modelling starts with a Base slot. "Add case" adds more, as in the app (no fixed limit).
+// Financial Modelling starts with a Base slot. "Add case" adds Downside, then Upside. The limit is 3 cases (version 3 plan, 20/11/2026).
 let SLOTS = [
   { id: 'fin',  mod: 'Financial Metrics',    sample: ['Northwind Financials FY26', 'Financials', 12] },
   { id: 'op',   mod: 'Operating Metrics',    sample: ['Northwind KPI Tracker FY26', 'Monthly KPIs', 3] },
   { id: 'cash', mod: 'Cash Flow',            sample: ['Northwind Cash Flow', 'Consolidated', 125] },
   { id: 'cap',  mod: 'Cap Table',            sample: ['Northwind Cap Table', 'FP to Sheet', 1] },
   { id: 'arr',  mod: 'ARR',                  sample: ['Northwind ARR Tracker', 'FP to Sheet', 2] },
-  { id: 'org',  mod: 'Organizational Update', sample: ['Northwind Monthly Updates', 'Updates', 20] },
 ];
-// Broken reasons use the wording of the app (googleClient.ts messages).
-const WHY = { token: 'Google no longer lets CFO Desk read this sheet.', gone: "CFO Desk can't open this sheet any more." };
+// Broken reasons use the wording of the app (googleClient.ts messages). The layout wording is a placeholder: Jason must confirm the real date rules.
+const WHY = { token: 'Google no longer lets CFO Desk read this sheet.', gone: "CFO Desk can't open this sheet any more.", layout: 'This tab does not have dates in the CFO Desk format.' };
 const byId = (id) => SLOTS.find(s => s.id === id);
 const fullName = (s) => s.cs ? `${s.mod}, ${s.cs}` : s.mod;
 
-// Forecast case slots. Names Downside and Upside are the app's suggestions. Cases after those are numbered.
+// Forecast case slots. Names Downside and Upside are the app's suggestions. FM_NAMES sets the limit of 3.
 const FM_NAMES = ['Base', 'Downside', 'Upside'], FM_SAMPLES = [['Northwind Forecast FY26, Base', 'Forecast', 8], ['Northwind Forecast FY26, Downside', 'Downside', 41]];
-const fmSlot = (i) => ({ id: 'fm' + (i + 1), mod: 'Financial Modelling', cs: FM_NAMES[i] || 'Case ' + (i + 1), sample: FM_SAMPLES[i] || null, state: 'none' });
+const fmSlot = (i) => ({ id: 'fm' + (i + 1), mod: 'Financial Modelling', cs: FM_NAMES[i], sample: FM_SAMPLES[i] || null, state: 'none' });
 const fmSlots = () => SLOTS.filter(s => s.mod === 'Financial Modelling');
 function addCase() {
   const n = fmSlots().length; SLOTS.splice(SLOTS.indexOf(fmSlots()[n - 1]) + 1, 0, fmSlot(n));
@@ -288,7 +291,7 @@ function seed(mode) {
   SLOTS.forEach(s => { s.state = 'none'; s.file = s.tab = s.last = s.why = null;
     if (mode === 'empty' || !s.sample) return;
     [s.file, s.tab] = s.sample; s.last = t(s.sample[2]); s.state = 'ok'; });
-  if (mode === 'broken') { Object.assign(byId('cap'), { state: 'error', why: WHY.token }); Object.assign(byId('fm2'), { state: 'error', why: WHY.gone }); }
+  if (mode === 'broken') { Object.assign(byId('cap'), { state: 'error', why: WHY.token }); Object.assign(byId('fm2'), { state: 'error', why: WHY.gone }); Object.assign(byId('op'), { state: 'error', why: WHY.layout }); }
 }
 
 let filter = 'all', focusSel = null;
@@ -303,6 +306,7 @@ function toast(msg, err) { const d = document.createElement('div'); d.className 
 const ICON_DB = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><ellipse cx="8" cy="3.5" rx="5.5" ry="2"/><path d="M2.5 3.5v9c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-9M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg>';
 const ICON_SHEET = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="1.5"/><path d="M2 6.5h12M2 10h12M6.5 6.5V14"/></svg>';
 const ICON_PLUS = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>';
+const ICON_FOLDER = '<svg class="fold" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h2.6l1.4 1.5h5A1.5 1.5 0 0 1 14 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5z"/></svg>';
 const ICON_EXT = '<svg class="ext" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M5 2H2v8h8V7M7 2h3v3M10 2L5.5 6.5"/></svg>';
 const PIPE = {
   ok: '<path class="dash" d="M2 12h74" stroke-dasharray="6 6"/><path d="M76 6l8 6-8 6"/>',
@@ -315,16 +319,19 @@ const flow = (state, sheetLabel) => `<div class="flow">${node('db', ICON_DB, '<s
 
 function slotHtml(s) {
   const full = fullName(s), none = s.state === 'none';
-  const link = none ? '' : `<button type="button" class="link" data-act="open" data-id="${s.id}" aria-label="Open ${s.file} in Drive">${s.file}${ICON_EXT}</button>`;
+  const layout = s.why === WHY.layout;
+  const link = none ? '' : `<a class="link" href="https://docs.google.com/spreadsheets/" target="_blank" rel="noopener noreferrer" aria-label="Open ${s.file} in Drive (opens in a new tab)">${s.file}${ICON_EXT}</a>`;
   const status = s.state === 'ok'
     ? `<div class="st"><span class="badge b-ok">${LABEL.ok}</span><span class="when">Synced ${rel(s.last)}</span></div>`
     : s.state === 'error'
-      ? `<span class="badge b-error">${LABEL.error}</span><p class="why">${s.why}</p>`
+      ? `<span class="badge b-error">${layout ? 'Wrong layout' : LABEL.error}</span><p class="why">${s.why}</p>`
       : `<span class="badge b-none">${LABEL.none}</span>`;
   const act = none ? `<button type="button" class="btn btn-primary" data-act="connect" data-id="${s.id}" aria-label="Connect ${full}">Connect</button>`
+    : layout ? `<button type="button" class="btn btn-primary" data-act="change" data-id="${s.id}" aria-label="Change sheet for ${full}">Change sheet</button>`
     : s.state === 'error' ? `<button type="button" class="btn btn-primary" data-act="reconnect" data-id="${s.id}" aria-label="Reconnect ${full}">Reconnect</button>`
     : `<button type="button" class="btn" data-act="sync" data-id="${s.id}" aria-label="Sync ${full} now">Sync now</button>`;
-  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs.startsWith('Case') ? s.cs : s.cs + ' case'}</div>` : ''}${status}</div><div class="act">${act}</div></div>`;
+  const off = none ? '' : `<button type="button" class="btn btn-sm" data-act="disconnect" data-id="${s.id}" aria-label="Disconnect ${full}">Disconnect</button>`;
+  return `<div class="slot" role="group" aria-label="${full}" data-slot="${s.id}">${flow(s.state, link)}<div class="info">${s.cs ? `<div class="slot-t">${s.cs} case</div>` : ''}${status}</div><div class="act">${act}${off}</div></div>`;
 }
 
 function render() {
@@ -334,8 +341,8 @@ function render() {
   $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button class="chip" data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join('');
   const cards = [...new Set(SLOTS.map(s => s.mod))].map((m, i) => {
     const rows = SLOTS.filter(s => s.mod === m && matches(s)).map(slotHtml).join('');
-    const baseOn = byId('fm1').state !== 'none';   // the app greys out Add case until Base is connected
-    const add = m === 'Financial Modelling' && filter === 'all' ? `<div class="addrow"><button type="button" class="btn" data-act="addcase"${baseOn ? '' : ' disabled'}>+ Add case</button>${baseOn ? '' : '<span class="hint">Connect Base first.</span>'}</div>` : '';
+    const hint = fmSlots().length >= FM_NAMES.length ? 'Limit is 3 cases.' : byId('fm1').state === 'none' ? 'Connect Base first.' : '';   // the app greys out Add case until Base is connected
+    const add = m === 'Financial Modelling' && filter === 'all' ? `<div class="addrow"><button type="button" class="btn" data-act="addcase"${hint ? ' disabled' : ''}>+ Add case</button>${hint ? `<span class="hint">${hint}</span>` : ''}</div>` : '';
     return rows ? `<section class="card" aria-labelledby="h${i}"><div class="card-h"><h2 id="h${i}">${m}</h2></div>${rows}${add}</section>` : '';
   }).join('');
   const start = filter === 'all' && !n('ok') && !n('error') ? '<p class="start">Nothing is connected yet. Choose Connect on a page below.</p>' : '';
@@ -345,12 +352,14 @@ function render() {
 
 // Connect and reconnect dialog. fl = { s: slot, step, reauth, file, tab, timer }
 const dlg = $('#dlg'); let fl = null;
-const FILES = ['Board pack data FY26', 'Untitled spreadsheet'], DATES = ['12/11/2026', '03/11/2026', '28/10/2026'], TABS = ['Summary', 'Monthly', 'FP to Sheet'];
+const BAD_SHEET = 'Untitled spreadsheet', DATES = ['12/11/2026', '03/11/2026', '28/10/2026'], TABS = ['Summary', 'Monthly', 'FP to Sheet'];
 const defFile = (s) => s.sample ? s.sample[0] : `Northwind Forecast FY26, ${s.cs}`;
+// Sample Drive for the file browser. A name that is also a key is a folder. BAD_SHEET is the sheet with the wrong layout.
+const TREE = (s) => ({ 'My Drive': ['Finance', 'Board'], Finance: [defFile(s), BAD_SHEET], Board: ['Board pack data FY26'] });
 const heading = (h) => `<h2 id="dlgT" tabindex="-1">${h}</h2>`;
 const cancel = '<button type="button" class="btn" data-d="cancel">Cancel</button>';
 
-function draw() {
+function draw(focus) {
   const { s, step, reauth } = fl, file = reauth ? s.file : fl.file;
   let b = '', f = '';
   if (step === 'google') {
@@ -359,10 +368,14 @@ function draw() {
     b += `<button type="button" class="btn btn-primary btn-wide" data-d="go">Continue as ${ACCT}</button>`;
     f = cancel;
   } else if (step === 'pick') {
-    const rows = [defFile(s), ...FILES].map((n, i) => `<label class="pick-row"><input type="radio" name="file" value="${n}"${fl.file === n ? ' checked' : ''}>${ICON_SHEET}<span>${n}</span><small>Edited ${DATES[i]}</small></label>`).join('');
+    const tree = TREE(s), dir = fl.path.at(-1);
+    const crumbs = fl.path.slice(0, -1).map((p, i) => `<button type="button" class="btn btn-sm" data-d="up" data-v="${i}">${p}</button><span aria-hidden="true">/</span>`).join('') + `<strong aria-current="location">${dir}</strong>`;
+    const rows = tree[dir].map((n, i) => tree[n]
+      ? `<button type="button" class="pick-row" data-d="open" data-v="${n}">${ICON_FOLDER}<span>${n}</span></button>`
+      : `<button type="button" class="pick-row" data-d="sheet" data-v="${n}" aria-pressed="${fl.file === n}">${ICON_SHEET}<span>${n}</span><small>Edited ${DATES[i]}</small></button>`).join('');
     const opts = TABS.map(x => `<option${fl.tab === x ? ' selected' : ''}>${x}</option>`).join('');
-    b = `<p class="step">Step 2 of 3</p>` + heading('Choose spreadsheet') + '<p class="hint">Mockup of the Google file picker.</p>' +
-      `<fieldset class="pickset"><legend class="f">Spreadsheet</legend><div class="pick">${rows}</div></fieldset>` +
+    b = `<p class="step">Step 2 of 3</p>` + heading('Choose spreadsheet') + '<p class="hint">Sample Drive. Nothing real is read.</p>' +
+      `<fieldset class="pickset"><legend class="f">Spreadsheet</legend><nav class="crumbs" aria-label="Folder path">${crumbs}</nav><div class="pick">${rows}</div></fieldset>` +
       `<label class="f" for="tabSel">Tab</label><select id="tabSel"${s.id === 'cap' ? ' disabled' : ''}>${s.id === 'cap' ? '' : '<option value="">Pick a tab</option>'}${opts}</select>`;
     f = `${cancel}<button type="button" class="btn" data-d="back">Back</button><button type="button" class="btn btn-primary" data-d="next"${fl.file && fl.tab ? '' : ' disabled'}>Next</button>`;
   } else if (step === 'confirm') {
@@ -371,29 +384,44 @@ function draw() {
   } else if (step === 'run') {
     b = heading(reauth ? 'Reconnecting' : 'Connecting') + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${file}</span>`)}</div><p role="status">Sending ${s.mod} data to the sheet.</p>`;
     f = cancel;
+  } else if (step === 'invalid') {
+    b = heading('Sheet layout does not match') + `<div class="dlg-flow">${flow('error', `<span class="nl strong">${file}</span>`)}</div><p>${WHY.layout}</p>`;
+    f = `${cancel}<button type="button" class="btn btn-primary" data-d="again">Choose another sheet</button>`;
+  } else if (step === 'disconnect') {
+    b = heading(`Disconnect ${fullName(s)}?`) + `<p>CFO Desk stops sending data to ${s.file}.</p>`;
+    f = `${cancel}<button type="button" class="btn btn-primary" data-d="disconnect">Disconnect</button>`;
   } else {
     b = heading(reauth ? 'Reconnected' : 'Connected') + `<div class="dlg-flow">${flow('ok', `<span class="nl strong">${file}</span>`)}</div><div class="st"><span class="badge b-ok">Live</span><span class="when">The feed runs on its own.</span></div>`;
     f = '<button type="button" class="btn btn-primary" data-d="done">Done</button>';
   }
   dlg.innerHTML = `<div class="dlg-b">${b}</div><div class="dlg-f">${f}</div>`;
-  dlg.querySelector('h2').focus();
+  (focus && dlg.querySelector(focus) || dlg.querySelector('h2')).focus();
 }
 function commit() {
-  const { s, reauth } = fl; if (!reauth) { s.file = fl.file; s.tab = fl.tab; }
+  const { s, reauth } = fl;
+  if (fl.file === BAD_SHEET) { fl.step = 'invalid'; return draw(); }   // the only layout check in the mockup
+  if (!reauth) { s.file = fl.file; s.tab = fl.tab; }
   Object.assign(s, { state: 'ok', last: Date.now(), why: null }); fl.step = 'done'; draw();
 }
-function openDlg(s, reauth) {
-  fl = { s, reauth, step: 'google', file: '', tab: s.id === 'cap' ? 'FP to Sheet' : '', timer: 0 };
-  focusSel = `[data-slot="${s.id}"] .act .btn`; dlg.showModal(); draw();
+function openDlg(s, reauth, step = 'google') {
+  fl = { s, reauth, step, file: '', tab: s.id === 'cap' ? 'FP to Sheet' : '', timer: 0, path: ['My Drive'] };
+  focusSel = `[data-slot="${s.id}"] ${step === 'disconnect' ? '[data-act="disconnect"]' : '.act .btn'}`; dlg.showModal(); draw();
 }
 dlg.addEventListener('click', (e) => {
-  const d = e.target.closest('[data-d]')?.dataset.d; if (!d || !fl) return;
+  const el = e.target.closest('[data-d]'), d = el?.dataset.d; if (!d || !fl) return;
   if (d === 'cancel' || d === 'done') return dlg.close();
-  fl.step = { go: fl.reauth ? 'run' : 'pick', next: 'confirm', connect: 'run', back: fl.step === 'confirm' ? 'pick' : 'google' }[d];
+  if (d === 'disconnect') {
+    const { s } = fl, was = s.file; Object.assign(s, { state: 'none', file: null, tab: null, last: null, why: null });
+    focusSel = `[data-slot="${s.id}"] .act .btn`; toast('Disconnected ' + was + '.'); return dlg.close();
+  }
+  if (d === 'open' || d === 'up') { fl.path = d === 'open' ? [...fl.path, el.dataset.v] : fl.path.slice(0, +el.dataset.v + 1); return draw('.pick-row'); }
+  if (d === 'sheet') { fl.file = el.dataset.v; return draw('.pick-row[aria-pressed="true"]'); }
+  if (d === 'again') fl.file = '';
+  fl.step = { go: fl.reauth ? 'run' : 'pick', next: 'confirm', connect: 'run', again: 'pick', back: fl.step === 'confirm' ? 'pick' : 'google' }[d];
   draw(); if (fl.step === 'run') fl.timer = setTimeout(commit, 1500);
 });
 dlg.addEventListener('change', (e) => {
-  if (e.target.name === 'file') fl.file = e.target.value; else if (e.target.id === 'tabSel') fl.tab = e.target.value;
+  if (e.target.id === 'tabSel') fl.tab = e.target.value;
   $('[data-d="next"]', dlg).disabled = !(fl.file && fl.tab);
 });
 dlg.addEventListener('close', () => { clearTimeout(fl?.timer); fl = null; render(); });
@@ -407,11 +435,11 @@ document.addEventListener('click', (ev) => {
   const b = ev.target.closest('[data-act]'); if (!b) return;
   const act = b.dataset.act; if (act === 'addcase') return addCase();
   const s = byId(b.dataset.id);
-  if (act === 'open') return toast('Mockup: opens ' + s.file + ' in Google Drive.');
   if (act === 'connect' || act === 'reconnect') return openDlg(s, act === 'reconnect');
+  if (act === 'change' || act === 'disconnect') return openDlg(s, false, act === 'change' ? 'pick' : 'disconnect');
   if (act === 'sync') {
     focusSel = `[data-slot="${s.id}"] .act .btn`; busy(b, 'Syncing');
-    setTimeout(() => { s.last = Date.now(); toast('Synced ' + s.file + '.'); render(); }, 900);
+    setTimeout(() => { if (!s.file) return; s.last = Date.now(); toast('Synced ' + s.file + '.'); render(); }, 900);   // a Disconnect inside the 900 ms must not toast "Synced null"
   }
 });
 
