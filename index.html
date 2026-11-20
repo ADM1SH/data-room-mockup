@@ -416,7 +416,7 @@ dlg.addEventListener('click', (e) => {
   }
   if (d === 'open' || d === 'up') { fl.path = d === 'open' ? [...fl.path, el.dataset.v] : fl.path.slice(0, +el.dataset.v + 1); return draw('.pick-row'); }
   if (d === 'sheet') { fl.file = el.dataset.v; return draw('.pick-row[aria-pressed="true"]'); }
-  if (d === 'again') fl.file = '';
+  if (d === 'again') Object.assign(fl, { file: '', path: ['My Drive'], tab: fl.s.id === 'cap' ? 'FP to Sheet' : '' });
   fl.step = { go: fl.reauth ? 'run' : 'pick', next: 'confirm', connect: 'run', again: 'pick', back: fl.step === 'confirm' ? 'pick' : 'google' }[d];
   draw(); if (fl.step === 'run') fl.timer = setTimeout(commit, 1500);
 });
